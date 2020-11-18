@@ -6,11 +6,15 @@
     justify="center"
   >
     <div>
-      {{
-        $auth.loggedIn
-          ? 'Hi there "' + $auth.user.name + '"'
-          : 'Why are you here?'
-      }}
+      <p>
+        Hi there <i>{{ $auth.user.given_name }}</i>
+      </p>
+      <p>
+        Your email is <i>{{ $auth.user.email }}</i>
+      </p>
+      <p>
+        Your locale is <i>{{ $auth.user.locale }}</i>
+      </p>
     </div>
   </div>
 </template>

@@ -3,14 +3,14 @@
     <vs-navbar
       v-model="active"
       target-scroll="#padding-scroll-content"
-      text-white
+      textWhite
       color="dark"
       padding-scroll
       center-collapsed
       class="condensed"
     >
       <template #left>
-        <img v-if="!$device.isMobile" src="/main.svg" alt="" />
+        <img v-if="!$device.isMobile" src="/favicon.svg" alt="" />
         &nbsp;
         <vs-button
           v-if="$device.isMobile"
@@ -38,11 +38,11 @@
           v-if="$auth.loggedIn"
           :loading="loadingFace"
           :animate-inactive="successFace"
-          @click="handleClickFace"
+          @click="logout"
           ><i class="bx bx-log-out"></i>&nbsp;Logout
           <template #animate>Really?</template>
         </vs-button>
-        <vs-button v-else @click="google"
+        <vs-button v-else @click="login"
           ><i class="bx bx-log-in"></i>&nbsp;Login</vs-button
         >
       </template>
@@ -88,7 +88,7 @@
         to="/profile"
         @click="activeSidebar = false"
         ><template #icon>
-          <i class="bx bx-question-mark"></i>
+          <i class="bx bx-user"></i>
         </template>
         Profile
       </vs-sidebar-item>
@@ -101,7 +101,7 @@
             />
           </vs-avatar>
           <vs-avatar primary @click="activeSidebar = !activeSidebar">
-            <i class="bx bx-arrow-back bx-tada-hover"></i>
+            <i class="bx bx-arrow-back bx-tada"></i>
           </vs-avatar>
         </vs-row>
       </template>
@@ -117,18 +117,24 @@ export default {
     successFace: false,
   }),
   methods: {
-    async google() {
-      await this.$auth.loginWith('google').catch((e) => {
-        console.log('Error' + e)
-      })
+    async login() {
+      await this.$auth
+        .loginWith('google')
+        .then(() => {
+          // console.log('Logged In')
+          this.$router.push('/profile')
+        })
+        .catch((e) => {
+          console.error(e)
+        })
     },
-    async handleClickFace() {
+    async logout() {
       this.loadingFace = true
       setTimeout(() => {
         this.loadingFace = false
         this.successFace = !this.successFace
         this.$auth.logout().catch((e) => {
-          console.log('Error' + e)
+          console.error(e)
         })
         this.$router.push('/')
       }, 2000)
