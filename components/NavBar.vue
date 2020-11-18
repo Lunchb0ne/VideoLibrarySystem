@@ -31,7 +31,7 @@
         :active="active == 'profile'"
         to="/profile"
       >
-        profile
+        Profile
       </vs-navbar-item>
       <template #right>
         <vs-button
@@ -50,12 +50,12 @@
     <vs-sidebar
       v-model="active"
       absolute
-      textWhite
+      text-white
       :open.sync="activeSidebar"
       background="dark"
     >
       <template #logo>
-        <img src="/main.svg" alt="" />
+        <img src="/icon.png" alt="" />
       </template>
       <vs-sidebar-item
         id="home"

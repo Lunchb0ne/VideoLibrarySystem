@@ -5,7 +5,7 @@
     align="center"
     justify="center"
   >
-    <div>This is the homepage!</div>
+    <div>Hi, we are trying to simplify it all</div>
   </div>
 </template>
 
