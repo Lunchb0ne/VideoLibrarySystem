@@ -115,7 +115,7 @@ export default {
         this.$auth.logout().catch((e) => {
           console.log('Error' + e)
         })
-        window.location.reload(true)
+        this.$router.push('/')
       }, 2000)
     },
   },

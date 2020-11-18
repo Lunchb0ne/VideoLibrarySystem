@@ -55,7 +55,9 @@ export default {
 		// for handling auth
 		'@nuxtjs/auth',
 		// for handling device-specific items
-		'@nuxtjs/device'
+		'@nuxtjs/device',
+		// for handling firebase-specific stuff
+		'@nuxtjs/firebase'
 	],
 	auth: {
 		strategies: {
@@ -64,10 +66,31 @@ export default {
 			}
 		}
 	},
-
+	firebase: {
+		config: {
+			apiKey: process.env.firebaseApiKey,
+			authDomain: 'videolibrarysystem.firebaseapp.com',
+			databaseURL: 'https://videolibrarysystem.firebaseio.com',
+			projectId: 'videolibrarysystem',
+			storageBucket: 'videolibrarysystem.appspot.com',
+			messagingSenderId: '261751540380',
+			appId: '1:261751540380:web:15cf3e9ad2f0246806bb59',
+			measurementId: 'G-VYC0D8R74K'
+		},
+		services: {
+			firestore: true
+		}
+	},
 	// Axios module configuration (https://go.nuxtjs.dev/config-axios)
 	axios: {},
 
 	// Build Configuration (https://go.nuxtjs.dev/config-build)
-	build: {}
+	build: {},
+
+	vue: {
+		config: {
+			productionTip: false,
+			devtools: true
+		}
+	}
 };

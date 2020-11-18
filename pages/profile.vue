@@ -8,7 +8,7 @@
     <div>
       {{
         $auth.loggedIn
-          ? 'Your email is ' + $auth.user.email
+          ? 'Hi there "' + $auth.user.name + '"'
           : 'Why are you here?'
       }}
     </div>
