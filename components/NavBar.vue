@@ -47,6 +47,8 @@
         >
       </template>
     </vs-navbar>
+
+    <!-- Special snowflake sidebar for mobile -->
     <vs-sidebar
       v-model="active"
       absolute
@@ -82,14 +84,27 @@
       <vs-sidebar-item
         v-if="$auth.loggedIn"
         id="profile"
-        :active="active == 'profile'"
+        :active="active == 'Profile'"
         to="/profile"
         @click="activeSidebar = false"
         ><template #icon>
           <i class="bx bx-question-mark"></i>
         </template>
-        profile
+        Profile
       </vs-sidebar-item>
+      <template #footer>
+        <vs-row justify="space-between">
+          <vs-avatar circle dark>
+            <img
+              :src="$auth.loggedIn ? $auth.user.picture : '/avatars/nouser.svg'"
+              alt=""
+            />
+          </vs-avatar>
+          <vs-avatar primary @click="activeSidebar = !activeSidebar">
+            <i class="bx bx-arrow-back bx-tada-hover"></i>
+          </vs-avatar>
+        </vs-row>
+      </template>
     </vs-sidebar>
   </div>
 </template>
