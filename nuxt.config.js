@@ -60,6 +60,12 @@ export default {
 		'@nuxtjs/firebase'
 	],
 	auth: {
+		redirect: {
+			login: '/login',
+			logout: '/',
+			callback: '/login',
+			home: '/profile'
+		},
 		strategies: {
 			google: {
 				client_id: process.env.googlekey

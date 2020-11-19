@@ -171,23 +171,9 @@ export default {
       const userRef = this.$fire.firestore.collection('users')
       await this.$auth
         .loginWith('google')
-        .then(async () => {
+        .then(() => {
           console.log('Logged In')
-          this.$router.push('/profile')
-          const res = await userRef
-            .where('email', '==', this.$auth.user.email)
-            .get()
-          if (res.empty) {
-            console.log('No matching user\nCreating a new one.')
-            const adding = await userRef.add({
-              email: this.$auth.user.email,
-              fname: this.$auth.user.given_name,
-              lname: this.$auth.user.given_name,
-              purchases: [],
-              type: 3,
-            })
-            return
-          }
+          // this.$router.go('/profile')
         })
         .catch((e) => {
           console.error(e)
@@ -201,7 +187,7 @@ export default {
         this.$auth.logout().catch((e) => {
           console.error(e)
         })
-        this.$router.push('/')
+        // this.$router.push('/')
         window.location.reload(true)
       }, 1000)
     },

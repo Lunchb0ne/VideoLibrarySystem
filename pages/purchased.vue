@@ -2,7 +2,7 @@
   <div id="padding-scroll-content" align="center" justify="center">
     <p v-if="$fetchState.pending"></p>
     <p v-else-if="$fetchState.error">An error occurred :(</p>
-    <div v-else class="center examplex">
+    <div v-else class="center">
       <vs-table striped>
         <template #thead>
           <vs-tr>
@@ -26,17 +26,17 @@
         </template>
       </vs-table>
     </div>
+    <vs-button @click="testQuery" v-if="isAdmin">TestQuery</vs-button>
   </div>
 </template>
 
 <script>
 export default {
   middleware: 'redirect',
-  data() {
-    return {
-      items: [],
-    }
-  },
+  data: () => ({
+    items: [],
+    isAdmin: false,
+  }),
   mounted() {},
   async fetch() {
     const loading = this.$vs.loading({
@@ -45,30 +45,33 @@ export default {
       text: 'Fetcing Transactions...',
       target: this.$refs.content,
     })
-    let refs = await this.$fire.firestore
+    // Transactions handling
+    let trasac = await this.$fire.firestore
       .collection('transac')
       .where('email', '==', this.$auth.user.email)
       .get()
-    refs.forEach(async (transac) => {
-      // Add id to the fetched data for easykeeping
+    trasac.forEach(async (transac) => {
       const tData = transac.data()
       const movieRef = this.$fire.firestore.collection('videos').doc(tData.item)
       let t = await movieRef.get()
       tData.id = transac.id
+      // Add movie-name to the fetched data for easykeeping
       tData.movie = t.data().name
-      //   console.log(tData)
+      // console.log(tData)
       this.items.push(tData)
     })
+    // handle admin logic
+    const userRef = this.$fire.firestore.collection('users')
+    const res = await userRef.where('email', '==', this.$auth.user.email).get()
+    this.isAdmin = res.docs[0].data().type == 1 ? true : false
     loading.close()
   },
-  methods: {},
+  methods: {
+    async testQuery() {
+      console.log('ADMINNNNNN')
+    },
+  },
 }
 </script>
 <style lang="css" scoped>
-.thumb {
-  position: relative;
-  width: 200px;
-  height: 200px;
-  overflow: hidden;
-}
 </style>
