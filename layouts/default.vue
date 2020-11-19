@@ -2,7 +2,7 @@
   <div>
     <NavBar />
     <div id="content">
-      <div :key="index" v-for="index in 8">&nbsp;</div>
+      <div :key="index" v-for="index in 4">&nbsp;</div>
       <nuxt />
     </div>
   </div>

@@ -85,7 +85,7 @@
         to="/catalog"
       >
         <template #icon>
-          <i class="bx bx-movie-play"></i>
+          <i class="bx bx-play"></i>
         </template>
         Catalog
       </vs-sidebar-item>
