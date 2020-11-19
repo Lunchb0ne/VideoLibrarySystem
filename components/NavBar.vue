@@ -39,7 +39,15 @@
         :active="active == 'profile'"
         to="/profile"
       >
-        Profile
+        Details
+      </vs-navbar-item>
+      <vs-navbar-item
+        v-if="$auth.loggedIn"
+        id="purchased"
+        :active="active == 'purchased'"
+        to="/purchased"
+      >
+        Purchases
       </vs-navbar-item>
       <template #right>
         <vs-button
@@ -100,17 +108,37 @@
         </template>
         About
       </vs-sidebar-item>
-      <vs-sidebar-item
-        v-if="$auth.loggedIn"
-        id="profile"
-        :active="active == 'Profile'"
-        to="/profile"
-        @click="activeSidebar = false"
-        ><template #icon>
-          <i class="bx bx-user"></i>
+      <vs-sidebar-group v-if="$auth.loggedIn">
+        <template #header>
+          <vs-sidebar-item arrow>
+            <template #icon>
+              <i class="bx bx-group"></i>
+            </template>
+            My Stuff
+          </vs-sidebar-item>
         </template>
-        Profile
-      </vs-sidebar-item>
+
+        <vs-sidebar-item
+          id="profile"
+          to="/profile"
+          @click="activeSidebar = false"
+        >
+          <template #icon>
+            <i class="bx bx-user"></i>
+          </template>
+          Details
+        </vs-sidebar-item>
+        <vs-sidebar-item
+          id="purchases"
+          to="/purchased"
+          @click="activeSidebar = false"
+        >
+          <template #icon>
+            <i class="bx bx-shopping-bag"></i>
+          </template>
+          Purchases
+        </vs-sidebar-item>
+      </vs-sidebar-group>
       <template #footer>
         <vs-row justify="space-between">
           <vs-avatar circle dark history>
@@ -135,13 +163,31 @@ export default {
     loadingFace: false,
     successFace: false,
   }),
+  mounted() {
+    this.active = this.$route.name == 'index' ? 'home' : this.$route.name
+  },
   methods: {
     async login() {
+      const userRef = this.$fire.firestore.collection('users')
       await this.$auth
         .loginWith('google')
-        .then(() => {
-          // console.log('Logged In')
+        .then(async () => {
+          console.log('Logged In')
           this.$router.push('/profile')
+          const res = await userRef
+            .where('email', '==', this.$auth.user.email)
+            .get()
+          if (res.empty) {
+            console.log('No matching user\nCreating a new one.')
+            const adding = await userRef.add({
+              email: this.$auth.user.email,
+              fname: this.$auth.user.given_name,
+              lname: this.$auth.user.given_name,
+              purchases: [],
+              type: 3,
+            })
+            return
+          }
         })
         .catch((e) => {
           console.error(e)
@@ -156,7 +202,8 @@ export default {
           console.error(e)
         })
         this.$router.push('/')
-      }, 2000)
+        window.location.reload(true)
+      }, 1000)
     },
   },
 }

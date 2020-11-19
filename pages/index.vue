@@ -11,7 +11,7 @@
 </template>
 
 <script>
-export default { name: 'index' }
+export default { name: 'home' }
 </script>
 <style scoped>
 html {

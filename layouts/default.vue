@@ -1,13 +1,20 @@
 <template>
   <div>
     <NavBar />
-    <div id="content">
+    <div id="content" ref="content">
       <div :key="index" v-for="index in 4">&nbsp;</div>
       <nuxt />
     </div>
   </div>
 </template>
-<script></script>
+<script>
+export default {
+  loading: {
+    color: 'blue',
+    height: '5px',
+  },
+}
+</script>
 
 <style>
 :root {
