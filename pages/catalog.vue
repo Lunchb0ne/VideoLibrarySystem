@@ -8,8 +8,12 @@
     <p v-if="$fetchState.pending">Fetching Videos...</p>
     <p v-else-if="$fetchState.error">An error occurred :(</p>
     <div v-else>
-      <vs-row vs-justify="space-around" vs-align="center">
-        <vs-col v-for="video in items" :key="video.id">
+      <vs-row justify="space-around">
+        <vs-col
+          v-for="video in items"
+          :key="video.id"
+          :w="$device.isDesktop ? 5 : 10"
+        >
           <br />
           <vs-card type="3">
             <template #title>
@@ -46,9 +50,9 @@
               </vs-button>
             </template>
           </vs-card>
+          <br />
         </vs-col>
       </vs-row>
-      <br />
     </div>
   </div>
 </template>
