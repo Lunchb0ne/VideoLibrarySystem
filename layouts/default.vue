@@ -1,13 +1,26 @@
 <template>
   <div>
     <NavBar />
-    <div :key="index" v-for="index in 8">&nbsp;</div>
-    <nuxt />
+    <div id="content">
+      <div :key="index" v-for="index in 8">&nbsp;</div>
+      <nuxt />
+    </div>
   </div>
 </template>
 <script></script>
 
 <style>
+:root {
+  --vs-background: 30, 32, 35;
+  --vs-text: 255, 255, 255;
+  --vs-gray-1: 24, 25, 28;
+  --vs-gray-2: 20, 20, 23;
+  --vs-gray-3: 15, 16, 19;
+  --vs-gray-4: 10, 11, 14;
+  --vs-shadow-opacity: 0.3;
+  --vs-dark: 0, 0, 0;
+  --vs-background-opacity: 0.6;
+}
 html {
   background: #141417;
   color: #fff;

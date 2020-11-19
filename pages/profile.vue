@@ -6,6 +6,9 @@
     justify="center"
   >
     <div>
+      <vs-avatar circle size="120" history>
+        <img :src="this.$auth.user.picture" alt="" />
+      </vs-avatar>
       <p>
         Hi there <i>{{ $auth.user.given_name }}</i>
       </p>

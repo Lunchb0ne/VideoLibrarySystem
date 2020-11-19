@@ -5,7 +5,9 @@
     align="center"
     justify="center"
   >
-    <div>Hi, we are trying to simplify it all</div>
+    <p>Hi, we are a group of developers trying to simplify it all</p>
+    <p>Think of it like blockbuster but better!</p>
+    <p>Please note : COVID will effect deliery times</p>
   </div>
 </template>
 

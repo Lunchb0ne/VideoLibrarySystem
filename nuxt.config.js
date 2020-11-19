@@ -9,7 +9,7 @@ export default {
 
 	// Global page headers (https://go.nuxtjs.dev/config-head)
 	head: {
-		title: 'VideoLibrarySystem',
+		title: 'Offlineflix',
 		meta: [
 			{ charset: 'utf-8' },
 			{ name: 'viewport', content: 'width=device-width, initial-scale=1' },
@@ -78,7 +78,8 @@ export default {
 			measurementId: 'G-VYC0D8R74K'
 		},
 		services: {
-			firestore: true
+			firestore: true,
+			storage: true
 		}
 	},
 	// Axios module configuration (https://go.nuxtjs.dev/config-axios)

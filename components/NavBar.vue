@@ -1,12 +1,12 @@
 <template>
   <div>
     <vs-navbar
-      v-model="active"
-      target-scroll="#padding-scroll-content"
-      textWhite
-      color="dark"
+      target-scroll="#content"
       padding-scroll
       center-collapsed
+      v-model="active"
+      textWhite
+      color="dark"
       class="condensed"
     >
       <template #left>
@@ -21,6 +21,14 @@
       </template>
       <vs-navbar-item id="home" :active="active == 'home'" to="/">
         Home
+      </vs-navbar-item>
+      <vs-navbar-item
+        v-if="$auth.loggedIn"
+        id="catalog"
+        :active="active == 'catalog'"
+        to="/catalog"
+      >
+        Catalog
       </vs-navbar-item>
       <vs-navbar-item id="about" :active="active == 'about'" to="/about">
         About
@@ -71,6 +79,17 @@
         Home
       </vs-sidebar-item>
       <vs-sidebar-item
+        v-if="$auth.loggedIn"
+        id="catalog"
+        :active="active == 'catalog'"
+        to="/catalog"
+      >
+        <template #icon>
+          <i class="bx bx-movie-play"></i>
+        </template>
+        Catalog
+      </vs-sidebar-item>
+      <vs-sidebar-item
         id="about"
         :active="active == 'about'"
         to="/about"
@@ -94,7 +113,7 @@
       </vs-sidebar-item>
       <template #footer>
         <vs-row justify="space-between">
-          <vs-avatar circle dark>
+          <vs-avatar circle dark history>
             <img
               :src="$auth.loggedIn ? $auth.user.picture : '/avatars/nouser.svg'"
               alt=""
