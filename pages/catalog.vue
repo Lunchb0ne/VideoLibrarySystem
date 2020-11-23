@@ -71,7 +71,7 @@
       </div>
       <template #footer>
         <vs-button block @click="processTransaction()">
-          Rent for $3.99
+          Rent for ₹99
         </vs-button>
       </template>
     </vs-dialog>
