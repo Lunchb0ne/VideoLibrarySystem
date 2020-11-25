@@ -70,8 +70,24 @@
         </p>
       </div>
       <template #footer>
-        <vs-button block @click="processTransaction()">
-          Rent for ₹99
+        <vs-button
+          gradient
+          :color="purchases.has(items[selectedItem].id) ? 'success' : 'primary'"
+          :disabled="purchases.has(items[selectedItem].id)"
+          :loading="buttonloads"
+          block
+          @click="processTransaction()"
+        >
+          <i
+            v-if="purchases.has(items[selectedItem].id)"
+            class="bx bx-check-circle"
+          ></i>
+          <i v-else class="bx bx-purchase-tag-alt"></i>&nbsp;
+          {{
+            purchases.has(items[selectedItem].id)
+              ? 'Already purchased'
+              : `Rent for ₹99`
+          }}
         </vs-button>
       </template>
     </vs-dialog>
@@ -82,9 +98,12 @@
 export default {
   middleware: 'redirect',
   data: () => ({
+    buttonloads: false,
     active: false,
     selectedItem: 0,
+    buttonactive: 0,
     items: [],
+    purchases: new Set(),
   }),
   mounted() {},
   async fetch() {
@@ -94,7 +113,9 @@ export default {
       text: 'Fetcing Videos...',
       target: this.$refs.content,
     })
-    let refs = await this.$fire.firestore.collection('videos').get()
+
+    // Fetching Videos
+    const refs = await this.$fire.firestore.collection('videos').get()
     refs.forEach((video) => {
       // Add id to the fetched data for easykeeping
       const vidData = video.data()
@@ -102,16 +123,53 @@ export default {
       // console.log(vidData)
       this.items.push(vidData)
     })
+
+    //Fetching user purchase data
+    const transactions = await this.$fire.firestore
+      .collection('transac')
+      .where('email', '==', this.$auth.user.email)
+      .get()
+
+    transactions.forEach(async (transac) => {
+      const data = transac.data()
+      this.purchases.add(data.item)
+    })
     loading.close()
   },
   methods: {
     doCheckout(index) {
       this.selectedItem = index
-      console.log(this.items[this.selectedItem].name)
+      console.log(this.items[this.selectedItem].id)
       this.active = true
+      this.buttonloads = false
     },
-    processTransaction() {
-      this.active = false
+    async processTransaction() {
+      // Turn button into loading
+      this.buttonloads = true
+      // add an entry to firebase
+      let refs = await this.$fire.firestore.collection('transac')
+      const purchasing = await refs
+        .add({
+          email: this.$auth.user.email,
+          item: this.items[this.selectedItem].id,
+          time: this.$fireModule.firestore.FieldValue.serverTimestamp(),
+        })
+        .then(
+          () => {
+            // make it change the button to green checkmark by adding the transaction to the set
+            console.log('Transaction Added')
+            this.purchases.add(this.items[this.selectedItem].id)
+            this.buttonloads = false
+          },
+          (err) => {
+            console.error(err)
+          }
+        )
+      console.log(this.items[this.selectedItem].id)
+      // remove the popup
+      setTimeout(() => {
+        this.active = false
+      }, 200)
     },
   },
 }

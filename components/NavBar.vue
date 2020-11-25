@@ -55,6 +55,7 @@
           :loading="loadingFace"
           :animate-inactive="successFace"
           @click="logout"
+          animation-type="vertical"
           ><i class="bx bx-log-out"></i>&nbsp;Logout
           <template #animate>Really?</template>
         </vs-button>

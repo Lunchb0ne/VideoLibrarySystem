@@ -5,6 +5,8 @@
     align="center"
     justify="center"
   >
+    <div :key="index" v-for="index in 4">&nbsp;</div>
+
     <p>Hi, we are a group of developers trying to simplify it all</p>
     <p>Think of it like blockbuster but better!</p>
     <p>Please note : COVID will effect deliery times</p>

@@ -5,6 +5,8 @@
     align="center"
     justify="center"
   >
+    <div :key="index" v-for="index in 4">&nbsp;</div>
+
     <div>
       <vs-avatar circle size="120" history>
         <img :src="this.$auth.user.picture" alt="" />
