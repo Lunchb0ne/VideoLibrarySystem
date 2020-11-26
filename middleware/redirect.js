@@ -10,7 +10,7 @@ export default async function({ store, redirect }) {
 			.add({
 				email: store.$auth.user.email,
 				fname: store.$auth.user.given_name,
-				lname: store.$auth.user.family_name,
+				lname: store.$auth.user.family_name ? store.$auth.user.family_name : '',
 				purchases: [],
 				type: 3,
 				created: store.$fireModule.firestore.FieldValue.serverTimestamp()
