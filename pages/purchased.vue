@@ -43,7 +43,7 @@
 
 <script>
 export default {
-  middleware: 'redirect',
+  middleware: 'adminRedirect',
   data: () => ({
     items: [],
     page: 1,
@@ -108,7 +108,7 @@ export default {
       this.items = []
       const trasac = await this.$fire.firestore
         .collection('transac')
-        // .where('email', '==', this.$auth.user.email)
+        .where('email', '==', this.$auth.user.email)
         .get()
       trasac.forEach(async (transac) => {
         const tData = transac.data()

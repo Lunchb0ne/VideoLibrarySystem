@@ -30,9 +30,6 @@
       >
         Catalog
       </vs-navbar-item>
-      <vs-navbar-item id="about" :active="active == 'about'" to="/about">
-        About
-      </vs-navbar-item>
       <vs-navbar-item
         v-if="$auth.loggedIn"
         id="profile"
@@ -43,11 +40,14 @@
       </vs-navbar-item>
       <vs-navbar-item
         v-if="$auth.loggedIn"
-        id="purchased"
-        :active="active == 'purchased'"
-        to="/purchased"
+        id="dashboard"
+        :active="active == 'dashboard'"
+        to="/dashboard"
       >
-        Purchases
+        Dashboard
+      </vs-navbar-item>
+      <vs-navbar-item id="about" :active="active == 'about'" to="/about">
+        About
       </vs-navbar-item>
       <template #right>
         <vs-button
@@ -98,17 +98,7 @@
         </template>
         Catalog
       </vs-sidebar-item>
-      <vs-sidebar-item
-        id="about"
-        :active="active == 'about'"
-        to="/about"
-        @click="activeSidebar = false"
-      >
-        <template #icon>
-          <i class="bx bx-label"></i>
-        </template>
-        About
-      </vs-sidebar-item>
+
       <vs-sidebar-group v-if="$auth.loggedIn">
         <template #header>
           <vs-sidebar-item arrow>
@@ -130,16 +120,27 @@
           Details
         </vs-sidebar-item>
         <vs-sidebar-item
-          id="purchases"
-          to="/purchased"
+          id="dashboard"
+          to="/dashboard"
           @click="activeSidebar = false"
         >
           <template #icon>
             <i class="bx bx-shopping-bag"></i>
           </template>
-          Purchases
+          Dashboard
         </vs-sidebar-item>
       </vs-sidebar-group>
+      <vs-sidebar-item
+        id="about"
+        :active="active == 'about'"
+        to="/about"
+        @click="activeSidebar = false"
+      >
+        <template #icon>
+          <i class="bx bx-label"></i>
+        </template>
+        About
+      </vs-sidebar-item>
       <template #footer>
         <vs-row justify="space-between">
           <vs-avatar circle dark history>

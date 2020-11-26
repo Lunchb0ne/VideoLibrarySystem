@@ -32,7 +32,7 @@
               <br />
               <p>{{ 'Released : ' + video.released }}</p>
             </template>
-            <!-- Interaction based on movie or sieries
+            <!-- Interaction based on movie or series
           We store length as number if it's a show (for episodes) and as a string if it's a movie for the runtime -->
             <template #interactions>
               <vs-button
@@ -55,40 +55,56 @@
       </vs-row>
     </div>
     <p v-if="$fetchState.pending"></p>
-    <vs-dialog v-else v-model="active">
+    <p v-else-if="items.length == 0">No Purchases :(</p>
+    <vs-dialog v-else width="200px" v-model="active">
       <template #header>
-        <h1 class="not-margin">Confirmation to <b>Rent</b></h1>
+        <h1 class="not-margin">
+          <b>{{ items[selectedItem].name }}</b>
+        </h1>
       </template>
-      <div class="con-form">
-        <p>
-          Movie Name : <i>{{ items[selectedItem].name }}</i> <br />
-          Director : <i>{{ items[selectedItem].director }}</i
-          ><br />
-          Genre : <i>{{ items[selectedItem].genre }}</i
-          ><br />
-          Release Year : <i>{{ items[selectedItem].released }}</i>
-        </p>
+      <div>
+        <p>{{ items[selectedItem].desc }}</p>
+        Director : <i>{{ items[selectedItem].director }}</i
+        ><br />
+        Genre : <i>{{ items[selectedItem].genre }}</i
+        ><br />
+        Release Year : <i>{{ items[selectedItem].released }}</i
+        ><br />
+        Lease Time Left :
+        <i>{{ purchases.get(items[selectedItem].id) + ' hrs' }}</i>
       </div>
+      <br />
       <template #footer>
-        <vs-button
-          gradient
-          :color="purchases.has(items[selectedItem].id) ? 'success' : 'primary'"
-          :disabled="purchases.has(items[selectedItem].id)"
-          :loading="buttonloads"
-          block
-          @click="processTransaction()"
-        >
-          <i
-            v-if="purchases.has(items[selectedItem].id)"
-            class="bx bx-check-circle"
-          ></i>
-          <i v-else class="bx bx-purchase-tag-alt"></i>&nbsp;
-          {{
-            purchases.has(items[selectedItem].id)
-              ? 'Already purchased'
-              : `Rent for ₹99`
-          }}
-        </vs-button>
+        <vs-row justify="space-around">
+          <vs-button
+            gradient
+            danger
+            :href="
+              'https://www.youtube.com/results?search_query=' +
+              items[selectedItem].name
+            "
+          >
+            <i class="bx bx-play"></i>&nbsp;Watch Now
+          </vs-button>
+          <vs-button
+            gradient
+            :color="shipped.has(items[selectedItem].id) ? 'success' : 'primary'"
+            :disabled="shipped.has(items[selectedItem].id)"
+            :loading="buttonloads"
+            @click="processTransaction()"
+          >
+            <i
+              v-if="shipped.has(items[selectedItem].id)"
+              class="bx bx-check-circle"
+            ></i>
+            <i v-else class="bx bx-box"></i>&nbsp;
+            {{
+              shipped.has(items[selectedItem].id)
+                ? 'Already Shipped'
+                : `Ship Item`
+            }}
+          </vs-button>
+        </vs-row>
       </template>
     </vs-dialog>
   </div>
@@ -103,7 +119,8 @@ export default {
     selectedItem: 0,
     buttonactive: 0,
     items: [],
-    purchases: new Set(),
+    purchases: new Map(),
+    shipped: new Set(),
   }),
   mounted() {},
   async fetch() {
@@ -113,17 +130,6 @@ export default {
       text: 'Fetcing Videos...',
       target: this.$refs.content,
     })
-
-    // Fetching Videos
-    const refs = await this.$fire.firestore.collection('videos').get()
-    refs.forEach((video) => {
-      // Add id to the fetched data for easykeeping
-      const vidData = video.data()
-      vidData.id = video.id
-      // console.log(vidData)
-      this.items.push(vidData)
-    })
-
     //Fetching user purchase data
     const transactions = await this.$fire.firestore
       .collection('transac')
@@ -132,8 +138,39 @@ export default {
 
     transactions.forEach(async (transac) => {
       const data = transac.data()
-      this.purchases.add(data.item)
+      const purchaseDate = new Date(data.time.toDate())
+      const hrsLeft =
+        (purchaseDate.getTime() + 1000 * 3600 * 24 * 3 - new Date().getTime()) /
+        (1000 * 3600)
+      this.purchases.set(data.item, Math.ceil(hrsLeft))
     })
+
+    // Fetching shipping data
+    const shipping = await this.$fire.firestore
+      .collection('ship')
+      .where('email', '==', this.$auth.user.email)
+      .get()
+
+    shipping.forEach(async (shipped) => {
+      const data = shipped.data()
+      this.shipped.add(data.item)
+    })
+
+    // Fetching Videos
+    const refs = await this.$fire.firestore.collection('videos').get()
+    refs.forEach((video) => {
+      // Add id to the fetched data for easykeeping
+      const vidData = video.data()
+      vidData.id = video.id
+      // if user has purchased the video
+      if (
+        this.purchases.has(vidData.id) &&
+        this.purchases.get(vidData.id) > 0
+      ) {
+        this.items.push(vidData)
+      }
+    })
+
     loading.close()
   },
   methods: {
@@ -147,8 +184,8 @@ export default {
       // Turn button into loading
       this.buttonloads = true
       // add an entry to firebase
-      let refs = await this.$fire.firestore.collection('transac')
-      const purchasing = await refs
+      let refs = await this.$fire.firestore.collection('ship')
+      const shipping = await refs
         .add({
           email: this.$auth.user.email,
           item: this.items[this.selectedItem].id,
@@ -157,8 +194,8 @@ export default {
         .then(
           () => {
             // make it change the button to green checkmark by adding the transaction to the set
-            console.log('Transaction Added')
-            this.purchases.add(this.items[this.selectedItem].id)
+            console.log('Shipment Added')
+            this.shipped.add(this.items[this.selectedItem].id)
             this.buttonloads = false
           },
           (err) => {
