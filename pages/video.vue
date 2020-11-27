@@ -170,6 +170,7 @@
             multiple
             accept="image/*"
             style="display: none"
+            @change="onFileChange"
           />
           <vs-button
             gradient
@@ -280,6 +281,7 @@ export default {
     async createVideo() {
       // Turn button into loading
       this.createVideoLoads = true
+      let videoid = ''
       // add an entry to firebase
       let refs = await this.$fire.firestore.collection('videos')
       const vid = await refs
@@ -292,25 +294,36 @@ export default {
           released: this.release,
         })
         .then(
-          () => {
+          (docRef) => {
             // make it change the button to green checkmark by adding the transaction to the set
             console.log('Video Added')
-            this.createVideoLoads = false
-            window.location.reload(true)
+            console.log(docRef.id)
+            videoid = docRef.id
+            const storageRef = this.$fire.storage.ref()
+            let videoref = storageRef.child(videoid + '.jpg')
+            videoref.put(this.image).then(function (snapshot) {
+              console.log('Uploaded the image as ' + videoid + ' or file!')
+              // remove the popup
+              setTimeout(function () {
+                this.createVideoLoads = false
+                this.active = false
+                window.location.reload(true)
+              }, 200)
+            })
           },
           (err) => {
             console.error(err)
           }
         )
-      const storageRef = this.$fire.storage.ref()
-      let videoref = storageRef.child(vid.id)
-      videoref.put(this.image).then(function (snapshot) {
-        console.log('Uploaded a blob or file!')
-      })
-      // remove the popup
-      setTimeout(() => {
-        this.active = false
-      }, 200)
+    },
+    onFileChange(e) {
+      var files = e.target.files || e.dataTransfer.files
+      if (!files.length) return
+      this.createImage(files[0])
+    },
+    createImage(file) {
+      this.image = file
+      console.log(this.image)
     },
     async processImage() {
       this.sending = true
@@ -327,15 +340,7 @@ export default {
   },
 }
 </script>
-<style lang="stylus">
-getColor(vsColor, alpha = 1) {
-  unquote('rgba(var(--vs-' + vsColor + '), ' + alpha + ')');
-}
-
-getVar(var) {
-  unquote('var(--vs-' + var + ')');
-}
-
+<style lang="stylus" scoped>
 .not-margin {
   margin: 0px;
   font-weight: normal;
@@ -389,7 +394,6 @@ getVar(var) {
 }
 
 .thumb {
-  position: relative;
   width: 200px;
   height: 200px;
   overflow: hidden;
