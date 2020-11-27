@@ -1,21 +1,37 @@
 <template>
   <div id="padding-scroll-content" align="center" justify="center">
+    <h1>Sales Records</h1>
     <p v-if="$fetchState.pending"></p>
     <p v-else-if="$fetchState.error">An error occurred :(</p>
     <div v-else ref="table" class="center">
       <vs-table striped>
+        <template #header>
+          <vs-input v-model="search" border placeholder="Search" />
+        </template>
         <template #thead>
           <vs-tr>
-            <vs-th> Movie </vs-th>
-            <vs-th> Email </vs-th>
-            <vs-th> Transac Id </vs-th>
-            <vs-th> Date </vs-th>
+            <vs-th sort @click="items = $vs.sortData($event, items, 'movie')">
+              Movie
+            </vs-th>
+            <vs-th sort @click="items = $vs.sortData($event, items, 'email')">
+              Email
+            </vs-th>
+            <vs-th sort @click="items = $vs.sortData($event, items, 'id')">
+              Transac Id
+            </vs-th>
+            <vs-th sort @click="items = $vs.sortData($event, items, 'time')">
+              Date
+            </vs-th>
           </vs-tr>
         </template>
         <template #tbody>
           <vs-tr
             :key="i"
-            v-for="(tr, i) in $vs.getPage(items, page, max)"
+            v-for="(tr, i) in $vs.getPage(
+              $vs.getSearch(items, search),
+              page,
+              max
+            )"
             :data="tr"
           >
             <vs-td>
@@ -28,7 +44,7 @@
               {{ tr.id }}
             </vs-td>
             <vs-td>
-              {{ tr.time.toDate().toLocaleString() }}
+              {{ tr.time }}
             </vs-td>
           </vs-tr>
         </template>
@@ -37,7 +53,6 @@
         </template>
       </vs-table>
     </div>
-    <vs-button @click="testQuery" v-if="isAdmin">TestQuery</vs-button>
   </div>
 </template>
 
@@ -48,8 +63,8 @@ export default {
     items: [],
     page: 1,
     max: 10,
-    isAdmin: false,
     updateCycle: 0,
+    search: '',
   }),
   mounted() {},
   async fetch() {
@@ -92,10 +107,6 @@ export default {
         console.log(`Encountered error: ${err}`)
       }
     )
-    // handle admin logic
-    const userRef = this.$fire.firestore.collection('users')
-    const res = await userRef.where('email', '==', this.$auth.user.email).get()
-    this.isAdmin = res.docs[0].data().type == 1 ? true : false
     // setTimeout(() => {
     loading.close()
     // }, 500)
@@ -106,10 +117,7 @@ export default {
     },
     async refreshTable() {
       this.items = []
-      const trasac = await this.$fire.firestore
-        .collection('transac')
-        .where('email', '==', this.$auth.user.email)
-        .get()
+      const trasac = await this.$fire.firestore.collection('transac').get()
       trasac.forEach(async (transac) => {
         const tData = transac.data()
         const movieRef = this.$fire.firestore
@@ -119,6 +127,7 @@ export default {
         tData.id = transac.id
         // Add movie-name to the fetched data for easykeeping
         tData.movie = t.data().name
+        tData.time = tData.time.toDate().toLocaleString()
         // console.log(tData)
         this.items.push(tData)
       })

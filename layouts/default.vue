@@ -41,4 +41,8 @@ html {
   /* font-family: 'IBM Plex Sans Condensed', sans-serif; */
   /* font-family: 'IBM Plex Serif', serif; */
 }
+.forced {
+  /* font-family: 'IBM Plex Sans', sans-serif; */
+  font-size: 0.85rem;
+}
 </style>

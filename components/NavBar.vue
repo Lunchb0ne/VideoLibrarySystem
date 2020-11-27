@@ -46,6 +46,28 @@
       >
         Dashboard
       </vs-navbar-item>
+      <vs-navbar-group v-if="isAdmin">
+        <span class="forced">Management</span>
+        <template #items>
+          <vs-navbar-item :active="active == 'video'" id="video" to="/video">
+            Video
+          </vs-navbar-item>
+          <vs-navbar-item
+            :active="active == 'checkSales'"
+            id="checkSales"
+            to="/sales"
+          >
+            Sales
+          </vs-navbar-item>
+          <vs-navbar-item
+            :active="active == 'shipping'"
+            id="shipping"
+            to="/shipping"
+          >
+            Shipping
+          </vs-navbar-item>
+        </template>
+      </vs-navbar-group>
       <vs-navbar-item id="about" :active="active == 'about'" to="/about">
         About
       </vs-navbar-item>
@@ -112,6 +134,7 @@
         <vs-sidebar-item
           id="profile"
           to="/profile"
+          :active="active == 'profile'"
           @click="activeSidebar = false"
         >
           <template #icon>
@@ -122,12 +145,56 @@
         <vs-sidebar-item
           id="dashboard"
           to="/dashboard"
+          :active="active == 'dashboard'"
           @click="activeSidebar = false"
         >
           <template #icon>
             <i class="bx bx-shopping-bag"></i>
           </template>
           Dashboard
+        </vs-sidebar-item>
+      </vs-sidebar-group>
+      <vs-sidebar-group v-if="isAdmin">
+        <template #header>
+          <vs-sidebar-item arrow>
+            <template #icon>
+              <i class="bx bx-glasses"></i>
+            </template>
+            Management
+          </vs-sidebar-item>
+        </template>
+        <vs-sidebar-item
+          id="video"
+          to="/video"
+          :active="active == 'video'"
+          @click="activeSidebar = false"
+        >
+          <template #icon>
+            <i class="bx bx-play-circle"></i>
+          </template>
+          Video
+        </vs-sidebar-item>
+        <vs-sidebar-item
+          :active="active == 'checkSales'"
+          id="checkSales"
+          to="/sales"
+          @click="activeSidebar = false"
+        >
+          <template #icon>
+            <i class="bx bx-dollar"></i>
+          </template>
+          Sales
+        </vs-sidebar-item>
+        <vs-sidebar-item
+          :active="active == 'shipping'"
+          id="shipping"
+          to="/shipping"
+          @click="activeSidebar = false"
+        >
+          <template #icon>
+            <i class="bx bx-checkbox-checked"></i>
+          </template>
+          Shipping
         </vs-sidebar-item>
       </vs-sidebar-group>
       <vs-sidebar-item
@@ -164,9 +231,15 @@ export default {
     activeSidebar: false,
     loadingFace: false,
     successFace: false,
+    isAdmin: false,
   }),
-  mounted() {
+  async mounted() {
     this.active = this.$route.name == 'index' ? 'home' : this.$route.name
+
+    // handle admin logic
+    const userRef = this.$fire.firestore.collection('users')
+    const res = await userRef.where('email', '==', this.$auth.user.email).get()
+    this.isAdmin = res.docs[0].data().type == 1 ? true : false
   },
   methods: {
     async login() {

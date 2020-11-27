@@ -5,6 +5,7 @@
     align="center"
     justify="center"
   >
+    <h1>The Catalog</h1>
     <p v-if="$fetchState.pending"></p>
     <p v-else-if="$fetchState.error">An error occurred :(</p>
     <div v-else>
