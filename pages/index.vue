@@ -1,6 +1,6 @@
 <template>
   <div class="square" align="center" justify="center">
-    <h1 id="hero">Offlineflix</h1>
+    <h1 id="hero">OnFlix</h1>
     <h2>Start Watching Now!</h2>
     <p>Be it online or offline, don't ever lose access to your content</p>
     <h3>Explore our catalog of Hundreds of Titles</h3>

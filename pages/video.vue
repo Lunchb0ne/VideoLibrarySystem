@@ -110,30 +110,81 @@
     </vs-dialog>
     <vs-dialog v-model="addItemModal">
       <template #header>
-        <h4 class="not-margin">Welcome to <b>Vuesax</b></h4>
+        <h4 class="not-margin">Add Video</h4>
       </template>
 
       <div class="con-form">
-        <vs-input v-model="email" placeholder="Email">
-          <template #icon> @ </template>
+        <vs-input
+          type="text"
+          block
+          v-model="name"
+          label-placeholder="Item Name"
+        >
+          <template #icon> <i class="bx bx-tag"></i> </template>
         </vs-input>
-        <vs-input type="password" v-model="password" placeholder="Password">
-          <template #icon>
-            <i class="bx bxs-lock"></i>
-          </template>
+        <vs-input
+          type="text"
+          block
+          v-model="director"
+          label-placeholder="Director Name"
+        >
+          <template #icon> <i class="bx bx-tag"></i> </template>
         </vs-input>
-        <div class="flex">
-          <vs-checkbox v-model="remember">Remember me</vs-checkbox>
-          <a href="#">Forgot Password?</a>
-        </div>
+        <vs-input type="text" block v-model="genre" label-placeholder="Genre">
+          <template #icon> <i class="bx bx-tag"></i> </template>
+        </vs-input>
+        <vs-input type="text" block v-model="length" label-placeholder="Length">
+          <template #icon> <i class="bx bx-tag"></i> </template>
+        </vs-input>
+        <vs-input
+          type="number"
+          block
+          v-model="release"
+          label-placeholder="Release Year"
+        >
+          <template #icon> <i class="bx bx-tag"></i> </template>
+        </vs-input>
+        <vs-input
+          type="text"
+          block
+          v-model="desc"
+          label-placeholder="Description"
+        >
+          <template #icon> <i class="bx bx-tag"></i></template>
+        </vs-input>
       </div>
 
       <template #footer>
-        <div class="footer-dialog">
-          <vs-button block> Sign In </vs-button>
-
-          <div class="new">New Here? <a href="#">Create New Account</a></div>
-        </div>
+        <vs-row justify="space-around">
+          <vs-button
+            gradient
+            danger
+            @click="createVideo()"
+            :loading="createVideoLoads"
+          >
+            <i class="bx bx-play"></i>&nbsp;Add Video
+          </vs-button>
+          <input
+            type="file"
+            id="fileElem"
+            multiple
+            accept="image/*"
+            style="display: none"
+          />
+          <vs-button
+            gradient
+            primary
+            :upload="sending"
+            :loading="buttonloads"
+            type="file"
+            id="input"
+            @click="processImage()"
+          >
+            <i v-if="imageAdded" class="bx bx-check-circle"></i>
+            <i v-else class="bx bx-box"></i>&nbsp;
+            {{ imageAdded ? 'Added Image' : `Add Image` }}
+          </vs-button>
+        </vs-row>
       </template>
     </vs-dialog>
   </div>
@@ -143,15 +194,22 @@
 export default {
   middleware: 'adminRedirect',
   data: () => ({
+    createVideoLoads: false,
     addItemModal: false,
-    email: '',
-    password: '',
+    sending: false,
+    name: '',
+    director: '',
+    genre: '',
+    length: '',
+    release: '',
+    desc: '',
     buttonloads: false,
     active: false,
     selectedItem: 0,
     buttonactive: 0,
     items: [],
     purchases: new Set(),
+    imageAdded: false,
   }),
   mounted() {},
   async fetch() {
@@ -219,31 +277,124 @@ export default {
         this.active = false
       }, 200)
     },
-    async addItem() {
-      this.addItemModal = true
+    async createVideo() {
+      // Turn button into loading
+      this.createVideoLoads = true
+      // add an entry to firebase
+      let refs = await this.$fire.firestore.collection('videos')
+      const vid = await refs
+        .add({
+          desc: this.desc,
+          director: this.director,
+          genre: this.genre,
+          length: this.length,
+          name: this.name,
+          released: this.release,
+        })
+        .then(
+          () => {
+            // make it change the button to green checkmark by adding the transaction to the set
+            console.log('Video Added')
+            this.createVideoLoads = false
+            window.location.reload(true)
+          },
+          (err) => {
+            console.error(err)
+          }
+        )
+      const storageRef = this.$fire.storage.ref()
+      let videoref = storageRef.child(vid.id)
+      videoref.put(this.image).then(function (snapshot) {
+        console.log('Uploaded a blob or file!')
+      })
+      // remove the popup
+      setTimeout(() => {
+        this.active = false
+      }, 200)
+    },
+    async processImage() {
+      this.sending = true
+      const fileElem = document.getElementById('fileElem')
+      if (fileElem) {
+        fileElem.click()
+        setTimeout(() => {
+          this.sending = false
+        }, 300)
+        this.image = fileElem.files[0]
+        this.imageAdded = true
+      }
     },
   },
 }
 </script>
-<style lang="css" scoped>
+<style lang="stylus">
+getColor(vsColor, alpha = 1) {
+  unquote('rgba(var(--vs-' + vsColor + '), ' + alpha + ')');
+}
+
+getVar(var) {
+  unquote('var(--vs-' + var + ')');
+}
+
 .not-margin {
   margin: 0px;
   font-weight: normal;
   padding: 10px;
 }
+
+.con-form {
+  width: 100%;
+
+  .flex {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    a {
+      font-size: 0.8rem;
+      opacity: 0.7;
+
+      &:hover {
+        opacity: 1;
+      }
+    }
+  }
+
+  .vs-checkbox-label {
+    font-size: 0.8rem;
+  }
+
+  .vs-input-content {
+    margin: 10px 0px;
+    width: calc(100%);
+
+    .vs-input {
+      width: 100%;
+      margin: 0.2em;
+    }
+  }
+}
+
+.not-margin {
+  margin: 0px;
+  font-weight: normal;
+  padding: 10px;
+}
+
 .con-form {
   display: flex;
   align-items: center;
-  /* justify-content: center; */
   flex-direction: column;
   font-size: 1.2em;
 }
+
 .thumb {
   position: relative;
   width: 200px;
   height: 200px;
   overflow: hidden;
 }
+
 #newItem {
   background-color: white;
 }
