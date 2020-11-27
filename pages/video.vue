@@ -12,7 +12,7 @@
       <vs-row justify="space-around">
         <vs-col :w="$device.isDesktop ? 4 : 10">
           <br />
-          <vs-card type="2" @click="addItem()">
+          <vs-card type="2" @click="addItemModal = !addItemModal">
             <template #img>
               <img
                 src="plus.svg"
@@ -108,6 +108,34 @@
         </vs-button>
       </template>
     </vs-dialog>
+    <vs-dialog v-model="addItemModal">
+      <template #header>
+        <h4 class="not-margin">Welcome to <b>Vuesax</b></h4>
+      </template>
+
+      <div class="con-form">
+        <vs-input v-model="email" placeholder="Email">
+          <template #icon> @ </template>
+        </vs-input>
+        <vs-input type="password" v-model="password" placeholder="Password">
+          <template #icon>
+            <i class="bx bxs-lock"></i>
+          </template>
+        </vs-input>
+        <div class="flex">
+          <vs-checkbox v-model="remember">Remember me</vs-checkbox>
+          <a href="#">Forgot Password?</a>
+        </div>
+      </div>
+
+      <template #footer>
+        <div class="footer-dialog">
+          <vs-button block> Sign In </vs-button>
+
+          <div class="new">New Here? <a href="#">Create New Account</a></div>
+        </div>
+      </template>
+    </vs-dialog>
   </div>
 </template>
 
@@ -115,6 +143,9 @@
 export default {
   middleware: 'adminRedirect',
   data: () => ({
+    addItemModal: false,
+    email: '',
+    password: '',
     buttonloads: false,
     active: false,
     selectedItem: 0,
@@ -187,6 +218,9 @@ export default {
       setTimeout(() => {
         this.active = false
       }, 200)
+    },
+    async addItem() {
+      this.addItemModal = true
     },
   },
 }

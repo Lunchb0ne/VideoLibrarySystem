@@ -237,9 +237,13 @@ export default {
     this.active = this.$route.name == 'index' ? 'home' : this.$route.name
 
     // handle admin logic
-    const userRef = this.$fire.firestore.collection('users')
-    const res = await userRef.where('email', '==', this.$auth.user.email).get()
-    this.isAdmin = res.docs[0].data().type == 1 ? true : false
+    if (this.$auth.loggedIn) {
+      const userRef = this.$fire.firestore.collection('users')
+      const res = await userRef
+        .where('email', '==', this.$auth.user.email)
+        .get()
+      this.isAdmin = res.docs[0].data().type == 1 ? true : false
+    }
   },
   methods: {
     async login() {
