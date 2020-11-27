@@ -47,7 +47,7 @@
         Dashboard
       </vs-navbar-item>
       <vs-navbar-group v-if="isAdmin">
-        <span class="forced">Management</span>
+        <span class="forced" to="/video">Management</span>
         <template #items>
           <vs-navbar-item :active="active == 'video'" id="video" to="/video">
             Video
@@ -227,15 +227,13 @@
 <script>
 export default {
   data: () => ({
-    active: 'home',
+    active: '',
     activeSidebar: false,
     loadingFace: false,
     successFace: false,
     isAdmin: false,
   }),
   async mounted() {
-    this.active = this.$route.name == 'index' ? 'home' : this.$route.name
-
     // handle admin logic
     if (this.$auth.loggedIn) {
       const userRef = this.$fire.firestore.collection('users')
@@ -244,6 +242,8 @@ export default {
         .get()
       this.isAdmin = res.docs[0].data().type == 1 ? true : false
     }
+    //fix navbar derpness
+    this.active = this.$route.name == 'index' ? 'home' : this.$route.name
   },
   methods: {
     async login() {
