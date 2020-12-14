@@ -17,7 +17,7 @@
     "@nuxtjs/firebase": "^7.1.1",
     "@nuxtjs/pwa": "^3.3.2",
     "core-js": "^3.8.1",
-    "firebase": "^8.1.1",
+    "firebase": "^8.2.0",
     "nuxt": "^2.14.10",
     "vuesax": "^4.0.1-alpha.25"
   },
