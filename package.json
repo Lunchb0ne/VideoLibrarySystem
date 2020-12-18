@@ -14,7 +14,7 @@
     "@nuxtjs/auth": "^4.9.1",
     "@nuxtjs/axios": "^5.12.4",
     "@nuxtjs/device": "^1.2.7",
-    "@nuxtjs/firebase": "^7.1.1",
+    "@nuxtjs/firebase": "^7.1.2",
     "@nuxtjs/pwa": "^3.3.2",
     "core-js": "^3.8.1",
     "firebase": "^8.2.0",
