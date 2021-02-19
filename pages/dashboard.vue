@@ -154,7 +154,11 @@ export default {
 
     shipping.forEach(async (shipped) => {
       const data = shipped.data()
-      this.shipped.add(data.item)
+      const shippingDate = new Date(data.time.toDate())
+      const timeleft =
+        (shippingDate.getTime() + 1000 * 3600 * 24 * 7 - new Date().getTime()) /
+        (1000 * 3600)
+      if (timeleft > 0) this.shipped.add(data.item)
     })
 
     // Fetching Videos
@@ -164,6 +168,7 @@ export default {
       const vidData = video.data()
       vidData.id = video.id
       // if user has purchased the video
+      // i might be slightly retarded idk why I used id to store the time
       if (
         this.purchases.has(vidData.id) &&
         this.purchases.get(vidData.id) > 0

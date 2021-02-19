@@ -133,7 +133,11 @@ export default {
 
     transactions.forEach(async (transac) => {
       const data = transac.data()
-      this.purchases.add(data.item)
+      const purchaseDate = new Date(data.time.toDate())
+      const hrsLeft =
+        (purchaseDate.getTime() + 1000 * 3600 * 24 * 3 - new Date().getTime()) /
+        (1000 * 3600)
+      if (hrsLeft > 0) this.purchases.add(data.item)
     })
     loading.close()
   },
