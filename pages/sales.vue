@@ -66,7 +66,6 @@ export default {
     updateCycle: 0,
     search: '',
   }),
-  mounted() {},
   async fetch() {
     const loading = this.$vs.loading({
       color: 'primary',
@@ -79,15 +78,15 @@ export default {
     const col = this.$fire.firestore.collection('transac')
     const observer = col.onSnapshot(
       (docSnapshot) => {
-        console.log(`Received doc snapshot`)
+        // console.log(`Received doc snapshot`)
         console.log(this.updateCycle)
         // make a clean fresh table
         if (this.UpdateCycle == 0) {
-          console.log('Using initial loading screen')
+          // console.log('Using initial loading screen')
           this.refreshTable()
           this.updateCycle++
         } else {
-          console.log('Adding loading screen')
+          // console.log('Adding loading screen')
           const loading = this.$vs.loading({
             color: 'primary',
             background: 'dark',
@@ -112,7 +111,7 @@ export default {
     // }, 500)
   },
   methods: {
-    async testQuery() {
+    testQuery() {
       console.log('ADMINNNNNN')
     },
     async refreshTable() {
@@ -135,5 +134,3 @@ export default {
   },
 }
 </script>
-<style lang="css" scoped>
-</style>

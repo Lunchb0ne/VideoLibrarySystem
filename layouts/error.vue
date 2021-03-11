@@ -1,18 +1,19 @@
 <template>
   <div>
     <NavBar />
-    <div id="content" ref="content">
+    <div class="square" align="center" justify="center" ref="content">
       <div :key="index" v-for="index in 4">&nbsp;</div>
-      <nuxt />
+      <h1>Well that's embarrassing....</h1>
+      <h2 v-if="error.statusCode === 404">Error 404 : Page not found</h2>
+      <h2 v-else>Error 500 : An error occurred</h2>
+      <vs-button warn gradient to="/">Go back to home!</vs-button>
     </div>
   </div>
 </template>
 <script>
 export default {
-  loading: {
-    color: 'blue',
-    height: '5px',
-  },
+  props: ['error'],
+  layout: 'error',
 }
 </script>
 
@@ -34,7 +35,6 @@ html {
   font-family: 'IBM Plex Sans', sans-serif;
   font-size: 1.2rem;
   word-spacing: 1px;
-  overflow-y: overlay;
   -ms-text-size-adjust: 100%;
   -webkit-text-size-adjust: 100%;
   -moz-osx-font-smoothing: grayscale;
@@ -55,26 +55,5 @@ html {
 .page-enter,
 .page-leave-to {
   opacity: 0;
-}
-
-/* Navbar tricks */
-html {
-  --scrollbarBG: #141417;
-  --thumbBG: #fff;
-}
-body::-webkit-scrollbar {
-  width: 11px;
-}
-body {
-  scrollbar-width: thin;
-  scrollbar-color: var(--thumbBG) var(--scrollbarBG);
-}
-body::-webkit-scrollbar-track {
-  background: var(--scrollbarBG);
-}
-body::-webkit-scrollbar-thumb {
-  background-color: var(--thumbBG);
-  border-radius: 6px;
-  border: 3px solid var(--scrollbarBG);
 }
 </style>

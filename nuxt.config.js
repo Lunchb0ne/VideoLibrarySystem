@@ -93,10 +93,15 @@ export default {
   // Build Configuration (https://go.nuxtjs.dev/config-build)
   build: {},
 
-  vue: {
-    config: {
-      productionTip: false,
-      devtools: true,
-    },
+  // Loading stuff
+  loading: {
+    color: 'blue',
+    height: '5px',
+  },
+
+  loadingIndicator: {
+    name: 'chasing-dots',
+    color: 'blue',
+    background: '#141417',
   },
 }

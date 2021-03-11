@@ -1,8 +1,8 @@
 <template>
   <div>
     <vs-navbar
-      target-scroll="#content"
       padding-scroll
+      fixed
       center-collapsed
       v-model="active"
       textWhite
@@ -47,7 +47,7 @@
         Dashboard
       </vs-navbar-item>
       <vs-navbar-group v-if="isAdmin">
-        <span class="forced" to="/video">Management</span>
+        Management
         <template #items>
           <vs-navbar-item :active="active == 'video'" id="video" to="/video">
             Video
@@ -233,7 +233,7 @@ export default {
     successFace: false,
     isAdmin: false,
   }),
-  async mounted() {
+  async beforeMount() {
     // handle admin logic
     if (this.$auth.loggedIn) {
       const userRef = this.$fire.firestore.collection('users')
@@ -267,7 +267,7 @@ export default {
           console.error(e)
         })
         // this.$router.push('/')
-        window.location.reload(true)
+        // window.location.reload(true)
       }, 1000)
     },
   },
@@ -276,5 +276,6 @@ export default {
 <style>
 button {
   font-family: 'IBM Plex Sans Condensed', sans-serif;
+  font-size: 0.85rem;
 }
 </style>

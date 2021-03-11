@@ -123,7 +123,6 @@ export default {
     purchases: new Map(),
     shipped: new Set(),
   }),
-  mounted() {},
   async fetch() {
     const loading = this.$vs.loading({
       color: 'primary',
@@ -131,7 +130,7 @@ export default {
       text: 'Fetcing Videos...',
       target: this.$refs.content,
     })
-    //Fetching user purchase data
+    //  Fetching user purchase data
     const transactions = await this.$fire.firestore
       .collection('transac')
       .where('email', '==', this.$auth.user.email)
@@ -182,7 +181,7 @@ export default {
   methods: {
     doCheckout(index) {
       this.selectedItem = index
-      console.log(this.items[this.selectedItem].id)
+      // console.log(this.items[this.selectedItem].id)
       this.active = true
       this.buttonloads = false
     },
@@ -190,7 +189,7 @@ export default {
       // Turn button into loading
       this.buttonloads = true
       // add an entry to firebase
-      let refs = await this.$fire.firestore.collection('ship')
+      const refs = await this.$fire.firestore.collection('ship')
       const shipping = await refs
         .add({
           email: this.$auth.user.email,
@@ -200,7 +199,7 @@ export default {
         .then(
           () => {
             // make it change the button to green checkmark by adding the transaction to the set
-            console.log('Shipment Added')
+            // console.log('Shipment Added')
             this.shipped.add(this.items[this.selectedItem].id)
             this.buttonloads = false
           },
@@ -208,7 +207,7 @@ export default {
             console.error(err)
           }
         )
-      console.log(this.items[this.selectedItem].id)
+      // console.log(this.items[this.selectedItem].id)
       // remove the popup
       setTimeout(() => {
         this.active = false
