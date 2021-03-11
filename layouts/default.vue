@@ -57,16 +57,16 @@ html {
   opacity: 0;
 }
 
-/* Navbar tricks */
+/* Scrollbar tricks */
 html {
   --scrollbarBG: #141417;
-  --thumbBG: #fff;
+  --thumbBG: #fafafa49;
 }
 body::-webkit-scrollbar {
   width: 11px;
 }
 body {
-  scrollbar-width: thin;
+  scrollbar-width: auto;
   scrollbar-color: var(--thumbBG) var(--scrollbarBG);
 }
 body::-webkit-scrollbar-track {
