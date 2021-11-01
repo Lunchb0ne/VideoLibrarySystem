@@ -9,7 +9,7 @@
     <div v-for="index in 4" :key="index">&nbsp;</div>
     <p>Hi, we are a group of developers trying to simplify it all</p>
     <p>Think of it like blockbuster but better!</p>
-    <p>Please note : COVID will effect deliery times</p>
+    <p>Please note : COVID will effect delivery times</p>
   </div>
 </template>
 
